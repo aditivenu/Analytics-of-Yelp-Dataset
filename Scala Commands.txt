@@ -1,0 +1,64 @@
+Question 1:
+
+val datasetBus=sc.textFile("/yelpdatafall/business/business.csv").map(line=>line.split("\\^"))
+val datasetBusiness=datasetBus.map(line=>(line(0),line(1).toString+line(2).toString))
+val datasetReview=sc.textFile("/yelpdatafall/review/review.csv").map(line=>line.split("\\^"))
+
+val sumOfReviews=datasetReview.map(line=>(line(2),line(3).toDouble)).reduceByKey((a,b)=>a+b).distinct
+val countOfReviews=datasetReview.map(line=>(line(2),1)).reduceByKey((a,b)=>a+b).distinct
+val sumCountJoin=sumOfReviews.join(countOfReviews)  
+
+val avgReview=sumCountJoin.map(a=>(a._1,a._2._1/a._2._2)) 
+val res=datasetBusiness.join(avgReview).distinct.collect()
+val sortedres=res.sortWith(_._2._2>_._2._2).take(10)
+sortedres.foreach(line=>println(line._1,line._2._1,line._2._2))
+
+=====================================================================================
+
+Question 2:
+
+val datasetUser=sc.textFile("/yelpdatafall/user/user.csv").map(line=>line.split("\\^"))
+val datasetReview=sc.textFile("/yelpdatafall/review/review.csv").map(line=>line.split("\\^"))
+
+val sumOfReviews=datasetReview.map(line=>(line(1),line(3).toDouble)).reduceByKey((a,b)=>a+b).distinct
+val countOfReviews=sumOfReviews.map(line=>(line(1),1)).reduceByKey((a,b)=>a+b).distinct
+val sumCountJoin=sumOfReviews.join(countOfReviews)
+val avgReview=sumCountJoin.map(a=>(a._1,a._2._1/a._2._2))
+
+#Type the user name after the below command and press enter
+val userName=Console.readLine()
+
+val userData=dataset3.filter(line=>line(1).contains(userName)).map(line=>(line(0).toString,line(1).toString))
+val finalres=userData.join(review).collect.foreach(println)
+
+==============================================================================
+Question 3:
+
+val datasetBusiness=sc.textFile("/yelpdatafall/business/business.csv").map(line=>line.split("\\^"))
+val filter=datasetBusiness.filter(line=>line(1).contains("Stanford")).map(line=>(line(0).toString,line(1).toString))
+val datasetReview=sc.textFile("/yelpdatafall/review/review.csv").map(line=>line.split("\\^"))
+val res = datasetReview.map(line=>(line(2).toString,(line(1).toString,line(3).toDouble)))
+val finalres=res.join(filter).collect.foreach(line=>println(line._2._1))
+
+================================================================================
+
+Question 4:
+
+val datasetUser1=sc.textFile("/yelpdatafall/user/user.csv").map(line=>line.split("\\^"))
+val datasetUser=datasetUser1.map(line=>(line(0),line(1).toString))
+val datasetReview=sc.textFile("/yelpdatafall/review/review.csv").map(line=>line.split("\\^"))
+val count=datasetReview.map(line=>(line(1),1)).reduceByKey((a,b)=>a+b).distinct
+val res=datasetUser.join(count).distinct.collect()
+val sortedres=res.sortWith(_._2._2>_._2._2).take(10)
+sortedres.foreach(line=>println(line._1,line._2._1))
+
+==========================================================
+
+Question 5:
+
+val datasetBus=sc.textFile("/yelpdatafall/business/business.csv").map(line=>line.split("\\^"))
+val filter=datasetBus.filter(line=>line(1).contains("TX")).map(line=>(line(0).toString,line(1).toString))
+val datasetRev=sc.textFile("/yelpdatafall/review/review.csv").map(line=>line.split("\\^"))
+val count=datasetRev.map(line=>(line(2),1)).reduceByKey((a,b)=>a+b)
+val res=filter.join(count).collect.foreach(line=>println(line._1,line._2._2))
+
