@@ -32,6 +32,7 @@ val userData=dataset3.filter(line=>line(1).contains(userName)).map(line=>(line(0
 val finalres=userData.join(review).collect.foreach(println)
 
 ==============================================================================
+
 Question 3:
 
 val datasetBusiness=sc.textFile("/yelpdatafall/business/business.csv").map(line=>line.split("\\^"))
